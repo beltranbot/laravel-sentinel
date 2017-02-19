@@ -15,8 +15,7 @@ class LoginController extends Controller
   }
 
   public function postLogin(Request $request)
-  {
-
+  {    
     try {
       $rememberMe = false;
       if (isset($request->remember_me)) {
