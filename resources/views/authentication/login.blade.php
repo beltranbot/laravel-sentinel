@@ -8,19 +8,13 @@
         <h3 class="panel-title"> Login</h3>
       </div>
       <div class="panel-body">
-        <form action="/login" method="post">
-          {{ csrf_field() }}
-          @if (session('error'))
-            <div class="alert alert-danger">
-              {{ session('error') }}
+        <form id="login-form">
+            <div class="alert alert-danger" style="display:none">
+              
             </div>
-          @endif
-
-          @if (session('success'))
-            <div class="alert alert-success">
-              {{ session('success') }}
+            <div class="alert alert-success" style="display:none">
+              
             </div>
-          @endif
 
           <div class="form-group">
             <div class="input-group">
@@ -49,4 +43,36 @@
     </div>
   </div>
 </div>
+@endsection
+@section('scripts')
+<script type="text/javascript">
+  $.ajaxSetup({
+    headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+  })
+  $('#login-form').submit(function(event) {
+    
+    event.preventDefault();
+
+    var postData = {
+      'email': $('input[name=email]').val(),
+      'password': $('input[name=password]').val(),
+      'remember_me': $('input[name=remember_me]').is(':checked')
+    };
+
+    $.ajax({
+      type: 'POST',
+      url: '/login',
+      data: postData,
+      success: function (response) {
+        window.location.href = response.redirect
+      },
+      error: function (response) {
+        $('.alert-danger').text(response.responseJSON.error)
+        $('.alert-danger').show()
+      }
+    });
+  });
+</script>
 @endsection

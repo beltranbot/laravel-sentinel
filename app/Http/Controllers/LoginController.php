@@ -15,7 +15,7 @@ class LoginController extends Controller
   }
 
   public function postLogin(Request $request)
-  {    
+  {
     try {
       $rememberMe = false;
       if (isset($request->remember_me)) {
@@ -26,21 +26,22 @@ class LoginController extends Controller
         $slug = Sentinel::getUser()->roles->first()->slug;
         if ($slug == 'admin') {
           return redirect('/earnings');
+          return response()->json(['redirect'=>'/earning']);
         } elseif ($slug == 'manager') {
-          return redirect('/tasks');
+          return response()->json(['redirect'=>'/tasks']);
         }
       } else {
-        return redirect()->back()->with(['error' => 'Wrong Credentials']);
+        return response()->json(['error' => 'Wrong Credentials'], 500);
       }
     } catch (ThrottlingException $e) {
       $delay = $e->getDelay();
-      return redirect()->back()->with([
+      return response()->json([
         'error' => "You are banned for $delay seconds."
-      ]);
+      ], 500);
     } catch (NotActivatedException $e) {
-      return redirect()->back()->with([
+      return response()->json([
         'error' => 'Your account is not activated.'
-      ]);
+      ], 500);
     }
   }
 
